@@ -53,9 +53,9 @@ you will find what you seek in here. From my side, I commit to update this repo 
   - [Map localhost port to pod port](#map-localhost-port-to-pod-port)
   - [Copy data between pod and localhost](#copy-data-between-pod-and-localhost)
   - [Execute shell command in the pod container](#execute-shell-command-in-the-pod-container)
-  - [List all available type of Kubernetes resources](#list-all-available-type-of-kubernetes-resources)
+  - [List all available types of Kubernetes resources](#list-all-available-type-of-kubernetes-resources)
   - [Get documentation for resource](#get-documentation-for-resource)
-  - [List all resources of specific type that exist in a cluster](#list-all-resources-of-specific-type-that-exist-in-a-cluster)
+  - [List all resources of a specific type that exist in a cluster](#list-all-resources-of-specific-type-that-exist-in-a-cluster)
   - [Describe Kubernetes resource](#describe-kubernetes-resource)
   - [Get manifest for Kubernetes resource](#get-manifest-for-kubernetes-resource)
   - [Change resource definition](#change-resource-definition)
@@ -118,8 +118,8 @@ you will find what you seek in here. From my side, I commit to update this repo 
 - [Resources \& Quotas](#resources--quotas)
   - [Configure default memory usage per container in the namespace](#configure-default-memory-usage-per-container-in-the-namespace)
   - [Configure limit for the requested storage](#configure-limit-for-the-requested-storage)
-  - [Configure resource limits for whole namespace](#configure-resource-limits-for-whole-namespace)
-  - [Configure how many objects of certains type can be created](#configure-how-many-objects-of-certains-type-can-be-created)
+  - [Configure resource limits for the whole namespace](#configure-resource-limits-for-whole-namespace)
+  - [Configure how many objects of certain type can be created](#configure-how-many-objects-of-certains-type-can-be-created)
 - [Workflows](#workflows)
 - [Helm](#helm)
 - [Learning Resources](#learning-resources)
@@ -275,19 +275,19 @@ Single command:
 kubectl exec <pod>  -- <command> 
 ```
 
-Get into container's shell:
+Get into the container's shell:
 ```sh
 kubectl exec -it <pod> -- sh
 kubectl exec -it <pod> -c <container> -- sh
 ```
 
-### List all available type of Kubernetes resources
+### List all available types of Kubernetes resources
 ```sh
 kubectl api-resources
 ```
 
 ### Get documentation for resource 
-For resource in common:
+For resources in common:
 ```sh
 kubectl explain <resource>
 
@@ -1048,7 +1048,7 @@ spec:
     image: nginx:stable-alpine
 ```
 
-Explicitly define which user and group to use in container:
+Explicitly define which user and group to use in the container:
 ```yaml
 kind: Pod
 metadata:
@@ -1062,7 +1062,7 @@ spec:
     image: nginx:stable-alpine
 ```
 
-**Note**: you can define ```securityContext``` both at the pod level and at the container level. In first case it will be applied
+**Note**: you can define ```securityContext``` both at the pod level and at the container level. In the first case it will be applied
 to all containers in the pod if they don't have their own ```securityContext```.
 
 ### Reduce container capabilities 
