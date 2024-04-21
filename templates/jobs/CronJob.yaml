@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: random-generator
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template: 
+        spec:
+          containers:
+          - name: random-generator
+            image: k8spatterns/random-generator:1.0
+            command: [ "java", "RandomRunner", "/numbers.txt", "10000" ]
+          restartPolicy: OnFailure

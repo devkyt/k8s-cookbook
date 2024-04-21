@@ -1,0 +1,10 @@
+apiVersion: 1
+kind: Pod
+metadata:
+  name: random-generator
+spec:
+  containers:
+  - name: random-generator
+    image: k8spatterns/random-generator:1.0
+  nodeSelector:
+    diskType: ssd

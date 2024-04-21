@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: randon-generator
+spec:
+  completions: 5
+  parallelism: 1
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      name: random-generator
+    spec:
+      restartPolice: OnFailure
+      containers:
+      - name: random-generator
+        image: k8spatterns/random-generator:1.0
+        command: [ "java", "RandomRunner", "/numbers.txt", "10000" ]
