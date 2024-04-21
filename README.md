@@ -227,8 +227,8 @@ kubectl delete pod <pod-name> --grace-period=0 --force
 kubectl delete pod event-collector-b7bc87c75-sw2gk --grace-period=0 --force
 ```
 
-### Map localhost port to pod port
-Connect directcly to pod's port:
+### Map localhost port to app port
+Connect directly to pod's port:
 ```sh
 kubectl port-forward <pod-name> <localhost-port>:<remote-port>
 
@@ -245,7 +245,7 @@ kubectl port-forward service/event-collector 8000:5672
 kubectl port-forward service/event-collector 8000:metrics
 ```
 
-Connectt via Deployment:
+Connect via Deployment:
 ```sh
 kubectl port-forward deployment/<deployment-name> <localhost-port>:<remote-port>
 
