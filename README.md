@@ -1,41 +1,45 @@
-<style>
+<!-- <style>
 .hover_img a span { position: absolute; display: none; z-index: 99; }
 .hover_img a:hover span { display: block; left: 25%; }
 
 .hover_gif a span { position: absolute; display: none; z-index: 99; }
 .hover_gif a:hover span { display: block; left: 5%; }
-</style>
+</style> -->
 
+<p>
+  <img src="img/kuber-black.png#gh-dark-mode-only" alt="image" height="100" style="margin-bottom: 15px"/>
+  <img src="img/kuber-white.png#gh-light-mode-only" alt="image" height="100" style="margin-bottom: 15px"/>
+</p>
 
-
-<img src="img/kuber.png" src-dark="img/kuber-dark.png" alt="image" height="100" style="margin-bottom: 15px"/>
 
 # Annotation <!-- omit in toc -->
 Let me be honest from the start, this repo is a collection of Kubernetes recipes and quick solutions to issues which I face daily in my job. 
 You don't find here any explanations how things work under the hood. If you need one of those better read some book, watch the video
 or refer to the official documentation. Fortunately, nowdays we have a real lot info about Kuber so whenever you want to
-you always have an opportunity to go 
-<span class="hover_img">
+you always have an opportunity to go deeper.
+<!-- <span class="hover_img">
   <a href="#">
     deeper.
     <span>
       <img src="img/mike.png" alt="mike" height="100"/>
     </span>
   </a>
-</span>
+</span> -->
 
 
 But if you are trying to figure out how to do something in no time or just decide to get your hands dirty, you are welcome. Hope, 
 you will find what you seek in here. From my side, I commit to update this repo with new info and new recipes during my career. 
 
-<span class="hover_gif">
+
+Have fun!
+<!-- <span class="hover_gif">
   <a href="#">
     Have fun!
     <span>
       <img src="img/party.gif" alt="party" height="100"/>
     </span>
   </a>
-</span>
+</span> -->
 
 
 
