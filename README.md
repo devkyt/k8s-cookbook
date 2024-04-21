@@ -172,7 +172,7 @@ kubectl get pods -n <namespace>
 kubectl get pods -n events
 ```
 
-Pods match a selector:
+Pods matching a selector:
 ```sh
 kubectl get pods -l <key>=<value> 
 
