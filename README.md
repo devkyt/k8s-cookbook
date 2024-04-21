@@ -136,10 +136,10 @@ you will find what you seek in here. From my side, I commit to update this repo 
   - [Repos](#repos)
 
 ## Notes
-- Almost all ```kubectl``` commands listed below can be used without -n namespace flag. In this case they will be executed in default namespace.
+- Almost all ```kubectl``` commands listed below can be used without namespace flag ```-n```. In this case they will be executed in the default namespace.
 - To deploy resource from YAML manifest use ```kubectl apply -f path/to/manifest``` command.
-- Obviously, this repo can't cover everything but, as I said, I'll try to keep it up to life so more materials will be added in the furture.
-- Feel free to write me if you face some issue with examples or if you just disagree about something.
+- Obviously, this repo can't cover everything but, as I said, I'll try to keep it up to life so more materials will be added in the future.
+- Feel free to write me if you face some issues with examples or if you just disagree about something.
 
 
 ## Basic Commands
