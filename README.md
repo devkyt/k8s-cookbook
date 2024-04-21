@@ -50,7 +50,7 @@ you will find what you seek in here. From my side, I commit to update this repo 
   - [List available pods](#list-available-pods)
   - [Get pod logs](#get-pod-logs)
   - [Delete pod](#delete-pod)
-  - [Map localhost port to pod port](#map-localhost-port-to-pod-port)
+  - [Map localhost port to app port](#map-localhost-port-to-app-port)
   - [Copy data between pod and localhost](#copy-data-between-pod-and-localhost)
   - [Execute shell command in the pod container](#execute-shell-command-in-the-pod-container)
   - [List all available types of Kubernetes resources](#list-all-available-type-of-kubernetes-resources)
