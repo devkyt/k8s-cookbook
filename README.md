@@ -73,11 +73,11 @@ you will find what you seek in here. From my side, I commit to update this repo 
 - [Pods](#pods)
   - [Create pod](#create-pod)
   - [Get pod IP address:](#get-pod-ip-address)
-  - [Delete all pods with specific status:](#delete-all-pods-with-specific-status)
+  - [Delete all pods with specific status](#delete-all-pods-with-specific-status)
   - [Count all pods in the cluster](#count-all-pods-in-the-cluster)
   - [Schedule pod on specific node:](#schedule-pod-on-specific-node)
-  - [Run pod on the same node as another pod:](#run-pod-on-the-same-node-as-another-pod)
-  - [Force pod to ignore node taints:](#force-pod-to-ignore-node-taints)
+  - [Run pod on the same node as another pod](#run-pod-on-the-same-node-as-another-pod)
+  - [Force pod to ignore node taints](#force-pod-to-ignore-node-taints)
   - [Pass pod metadata to container as environment variables](#pass-pod-metadata-to-container-as-environment-variables)
   - [Pas container resource info to container as environment variables](#pas-container-resource-info-to-container-as-environment-variables)
 - [Volumes](#volumes)
@@ -457,7 +457,7 @@ spec:
   restartPolicy: Never
 ``` 
 
-### Get pod IP address:
+### Get pod IP address
 ```sh
 kubectl get pod <pod-name> -o jsonpath="{.status.podIP}"
 
@@ -465,7 +465,7 @@ kubectl get pod <pod-name> -o jsonpath="{.status.podIP}"
 kubectl get pods busybox -o jsonpath="{.status.podIP}"
 ```
 
-### Delete all pods with specific status:
+### Delete all pods with specific status
 ```sh
 kubectl delete pods --field-selector status.phase=<status:Pending,Failed,Unknown,Running,Succeeded>
 
@@ -478,7 +478,7 @@ kubectl delete pods --field-selector status.phase=Failed
 kubectl get pods --field-selector=status.phase!=Succeeded,status.phase!=Failed --output json | jq -j '.items | length'
 ```
 
-### Schedule pod on specific node: 
+### Schedule pod on specific node
 Via nodeSelector:
 ```yaml
 spec:
@@ -506,7 +506,7 @@ spec:
             values: [ "temporary-node" ]
 ```
 
-### Run pod on the same node as another pod:
+### Run pod on the same node as another pod
 ```yaml
 spec:
   affinity:
@@ -519,7 +519,7 @@ spec:
             values: [ "data", "ml" ]
 ```
 
-### Force pod to ignore node taints:
+### Force pod to ignore node taints
 ```yaml
 spec:
   tolerations:
