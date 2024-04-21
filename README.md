@@ -16,7 +16,7 @@
 Let me be honest from the start, this repo is a collection of Kubernetes recipes and quick solutions to issues which I face daily in my job. 
 You don't find here any explanations how things work under the hood. If you need one of those better read some book, watch the video
 or refer to the official documentation. Fortunately, nowdays we have a real lot info about Kuber so whenever you want to
-you always have an opportunity to go deeper.
+you always have an opportunity to go [deeper](./img/mike.png).
 <!-- <span class="hover_img">
   <a href="#">
     deeper.
@@ -31,7 +31,7 @@ But if you are trying to figure out how to do something in no time or just decid
 you will find what you seek in here. From my side, I commit to update this repo with new info and new recipes during my career. 
 
 
-Have fun!
+[Have fun!](./img/party.gif)
 <!-- <span class="hover_gif">
   <a href="#">
     Have fun!
@@ -94,30 +94,34 @@ Have fun!
   - [Create ClusterIP service](#create-clusterip-service)
   - [Create NodePort service](#create-nodeport-service)
   - [Create headless service](#create-headless-service)
-- [Jobs -1](#jobs--1)
-  - [Run job one time - !](#run-job-one-time---)
-  - [Get logs of a job -!](#get-logs-of-a-job--)
-  - [Run job periodically](#run-job-periodically)
+- [Jobs](#jobs)
+  - [Run some job once](#run-some-job-once)
+  - [Get logs of a job](#get-logs-of-a-job)
+  - [Run job regularly](#run-job-regularly)
 - [RBAC](#rbac)
-  - [Create Role -!](#create-role--)
-  - [Create ServiceAccount -!](#create-serviceaccount--)
-  - [Bind ServiceAccount to Role -!](#bind-serviceaccount-to-role--)
+  - [Create Role](#create-role)
+  - [Get existing ServiceAccounts](#get-existing-serviceaccounts)
+  - [Create ServiceAccount](#create-serviceaccount)
+  - [Bind ServiceAccount to Role](#bind-serviceaccount-to-role)
+  - [Combine few ClusterRoles in one](#combine-few-clusterroles-in-one)
+  - [Check if service acc has permission to do some action](#check-if-service-acc-has-permission-to-do-some-action)
 - [Security](#security)
-  - [Prevent container to run with root user -!](#prevent-container-to-run-with-root-user--)
-  - [Reduce container capabilities -!](#reduce-container-capabilities--)
-  - [Make container root filesystem immutable -!](#make-container-root-filesystem-immutable--)
-  - [Setup Traffic Rules -!](#setup-traffic-rules--)
+  - [Prevent container to run with root user](#prevent-container-to-run-with-root-user)
+  - [Reduce container capabilities](#reduce-container-capabilities)
+  - [Make container root filesystem immutable](#make-container-root-filesystem-immutable)
+- [Network Traffic Rules](#network-traffic-rules)
+  - [Forbid all ingress traffic to an app](#forbid-all-ingress-traffic-to-an-app)
+  - [Restrict ingress traffic to the app](#restrict-ingress-traffic-to-the-app)
+  - [Deny all egress traffic from the app (except to kube-system for dns resolution)](#deny-all-egress-traffic-from-the-app-except-to-kube-system-for-dns-resolution)
+  - [Allow egress traffic only inside a cluster](#allow-egress-traffic-only-inside-a-cluster)
+  - [Forbid egress traffic to specific IP's](#forbid-egress-traffic-to-specific-ips)
 - [Resources \& Quotas](#resources--quotas)
   - [Configure default memory usage per container in the namespace](#configure-default-memory-usage-per-container-in-the-namespace)
   - [Configure limit for the requested storage](#configure-limit-for-the-requested-storage)
   - [Configure resource limits for whole namespace](#configure-resource-limits-for-whole-namespace)
   - [Configure how many objects of certains type can be created](#configure-how-many-objects-of-certains-type-can-be-created)
 - [Workflows](#workflows)
-- [Helm -1](#helm--1)
-  - [Install Helm Chart to Cluster -1](#install-helm-chart-to-cluster--1)
-  - [Upgrade existing Helm Chart -1](#upgrade-existing-helm-chart--1)
-  - [Validate Chart -1](#validate-chart--1)
-  - [Reusable templates -!](#reusable-templates--)
+- [Helm](#helm)
 - [Learning Resources](#learning-resources)
   - [Books](#books)
   - [Articles](#articles)
@@ -859,71 +863,335 @@ spec:
     protocol: TCP
 ```
 
-## Jobs -1
-### Run job one time - !
+## Jobs
+### Run some job once
 ```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: migration
+        image: eu.gcr.io/org/backend:stable
+        command: ["bash", "-c", "python manage.py migrate --fake-initial"]
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                key: DATABASE_URL
+                name: backend-env
+      restartPolicy: Never
+  backoffLimit: 2
 ```
 
-### Get logs of a job -!
+### Get logs of a job
 ```sh
+kubectl logs <job-pod-name>
+kubectl logs jobs/<job-name>
+
+# example
+kubectl logs migrate-job-7f6cc7cdc8-rqldg
+kubectl logs jobs/migrate-job
 ```
 
-### Run job periodically
+### Run job regularly
 ```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: duck
+spec:
+  schedule: "*/30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: duck-says
+            image: busybox:stable
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - echo "Kuber quack-quack-quack"
+          restartPolicy: OnFailure
 ```
 
 ## RBAC
 
-### Create Role -!
+### Create Role 
+Create role which control resource access within one namespace:
 ```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spy
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "watch", "list"]
 ```
 
-### Create ServiceAccount -!
+Create role which control resource access within whole cluster:
 ```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spy
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "watch", "list"]
 ```
 
-### Bind ServiceAccount to Role -!
-```yaml
+### Get existing ServiceAccounts
+```sh
+kubectl get serviceaccounts -n <namespace>
+
+# example
+kubectl get serviceaccounts -n events
 ```
 
+### Create ServiceAccount 
+Using CLI:
+```sh
+kubectl create serviceaccount <service_acc_name> -n <namespace>
 
+# example 
+kubectl create serviceaccount spy
+kubectl create serviceaccount spy -n events 
+```
+
+From YAML:
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spy
+  namespace: default
+```
+
+### Bind ServiceAccount to Role 
+Create binding for the role in specific namespace:
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-reader
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: spy
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: spy
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Create binding for the cluster-wide role:
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secret-reader
+subjects:
+- kind: ServiceAccount
+  name: spy
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: spy
+  apiGroup: rbac.authorization.k8s.io
+```
+
+**Notes**: Role Binding can reference a Cluster Role as well. If it so all permissions from Cluster Role work only for resources in namespace of Role Binding
+
+### Combine few ClusterRoles in one
+You can combine few Cluster Roles into the one. To do this add a labels for Cluster Roles which permissions you want to aggregate and then create new role with aggreagtionRule option. Just likes this:
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: admin
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      aggregate-to-admin: "true"
+rules: [] # rules list must be empty. It will be filled from Cluster Roles that match the label
+```
+
+### Check if service acc has permission to do some action
+```sh
+kubectl auth can-i <verb> <resource> --as=system:serviceaccount:<namespace>:<service_acc_name>
+
+# example
+kubectl auth can-i create pod --as=system:serviceaccount:default:watchdog
+```
 
 ## Security
-### Prevent container to run with root user -!
+### Prevent container to run with root user
 Ensure that container doesn't start up with root user in charge:
 ```yaml
+kind: Pod
+metadata:
+  name: web 
+spec:
+  securityContext: 
+    runAsNonRoot: true 
+  containers: 
+  - name: web
+    image: nginx:stable-alpine
 ```
 
 Explicitly define which user and group to use in container:
 ```yaml
+kind: Pod
+metadata:
+  name: web 
+spec:
+  securityContext: 
+    runAsUser: 1000 
+    runAsGroup: 2000
+  containers: 
+  - name: web
+    image: nginx:stable-alpine
 ```
 
-### Reduce container capabilities -!
-yaml
-```
-```
+**Note**: you can define ```securityContext``` both at the pod level and at the container level. In first case it will be applied
+to all containers in the pod if they don't have their own ```securityContext```.
 
-### Make container root filesystem immutable -!
+### Reduce container capabilities 
 ```yaml
+kind: Pod
+metadata:
+  name: web 
+spec:
+  containers: 
+  - name: web
+    image: nginx:stable-alpine
+    securityContext:
+      capabilities:
+        drop: [ 'ALL' ]
+        add: ['NET_BIND_SERVICE']
 ```
 
-### Setup Traffic Rules -!
-Forbid all ingress traffic to the pods:
+### Make container root filesystem immutable 
 ```yaml
+kind: Pod
+metadata:
+  name: backend 
+spec:
+  containers: 
+  - name: web
+    image: eu.gcr.io/org/backend:stable
+    securityContext:
+      readOnlyRootFilesystem: true
 ```
 
-Restrict ingress traffic for some pod:
+## Network Traffic Rules 
+### Forbid all ingress traffic to an app
 ```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-deny-all
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress: []
 ```
 
-Allow egress traffic only inside a cluster:
+### Restrict ingress traffic to the app
 ```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: db-allow
+spec:
+  podSelector:
+    matchLabels: # to pods
+      app: gameshop 
+      id: db
+  ingress:
+  - from:
+      - podSelector:
+          matchLabels: # from pods
+            app: gameshop
+            id: backend
+
 ```
 
-Forbid egress traffic to specific IP's:
+
+### Deny all egress traffic from the app (except to kube-system for dns resolution)
 ```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: db
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
 ```
 
+### Allow egress traffic only inside a cluster
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-within-cluster
+spec:
+  policyTypes:
+  - Egress
+  podSelector:
+    matchLabels:
+      app: events
+  egress: []
+```
+
+### Forbid egress traffic to specific IP's
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+          - 172.17.0.0/16
+          - 172.23.42.0/24
+
+```
 
 ## Resources & Quotas
 
@@ -944,7 +1212,7 @@ spec:
       memory: 256Mi 
 ```
 
-Define default and max values:
+Define default, min and max values:
 ```yaml
 apiVersion: v1
 kind: LimitRange
@@ -1021,9 +1289,11 @@ spec:
 ```
 
 ## Workflows
+In progress...
 
-## Helm -1
-### Install Helm Chart to Cluster -1
+## Helm 
+In progress...
+<!-- ### Install Helm Chart to Cluster 
 From repo:
 ```sh
 ```
@@ -1032,10 +1302,10 @@ From local machine:
 ```sh
 ```
 
-### Upgrade existing Helm Chart -1
-### Validate Chart -1 
+### Upgrade existing Helm Chart 
+### Validate Chart  
 
-### Reusable templates -!
+### Reusable templates  -->
 
 ## Learning Resources 
 
