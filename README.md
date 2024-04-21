@@ -260,25 +260,34 @@ kubectl cp /local/path <namespace>/<pod>:/remote/path
 kubectl cp /local/path <namespace>/<pod>:/remote/path  -c <container-name>
 
 # example
+kubectl cp config.json default/web/:app/src/
 ```
 
 Copy from pod to localhost:
 ```sh
-kubectl cp <namespace>/<pod>:/remote/path /local/path
+kubectl cp <namespace>/<pod>:remote/path /local/path
 
 # example
+kubectl cp default/web:app/assets/css/  ./css/
 ```
 
 ### Execute shell command in the pod container
 Single command:
 ```sh
-kubectl exec <pod>  -- <command> 
+kubectl exec <pod>  -- <command>
+
+# example
+kubectl exec -it busybox -- ls -a
 ```
 
 Get into the container's shell:
 ```sh
 kubectl exec -it <pod> -- sh
 kubectl exec -it <pod> -c <container> -- sh
+
+# example
+kubectl exec -it busybox -- sh
+kubectl exec -it web -c nginx -- sh
 ```
 
 ### List all available types of Kubernetes resources
