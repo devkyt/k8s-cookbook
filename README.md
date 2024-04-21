@@ -72,7 +72,7 @@ you will find what you seek in here. From my side, I commit to update this repo 
   - [Get node's system info](#get-nodes-system-info)
 - [Pods](#pods)
   - [Create pod](#create-pod)
-  - [Get pod IP address:](#get-pod-ip-address)
+  - [Get pod IP address](#get-pod-ip-address)
   - [Delete all pods with specific status](#delete-all-pods-with-specific-status)
   - [Count all pods in the cluster](#count-all-pods-in-the-cluster)
   - [Schedule pod on specific node](#schedule-pod-on-specific-node)
