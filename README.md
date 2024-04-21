@@ -75,7 +75,7 @@ you will find what you seek in here. From my side, I commit to update this repo 
   - [Get pod IP address:](#get-pod-ip-address)
   - [Delete all pods with specific status](#delete-all-pods-with-specific-status)
   - [Count all pods in the cluster](#count-all-pods-in-the-cluster)
-  - [Schedule pod on specific node:](#schedule-pod-on-specific-node)
+  - [Schedule pod on specific node](#schedule-pod-on-specific-node)
   - [Run pod on the same node as another pod](#run-pod-on-the-same-node-as-another-pod)
   - [Force pod to ignore node taints](#force-pod-to-ignore-node-taints)
   - [Pass pod metadata to container as environment variables](#pass-pod-metadata-to-container-as-environment-variables)
